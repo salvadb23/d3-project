@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* .timer {
+            transform: translate(-50%, -50%);
+        } */
+    </style>
+</head>
+<body style="display: flex; flex-direction: column; justify-content: center; margin: 0px; padding: 0px; align-items: center; font-family: -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif";>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: sticky; top: 0; background-color: rgba(0,0,0,.2); border-radius: 20px; padding: 100px;"; >
+        <div style="margin-top: 40px;">
+            <button class="Button Pig">🐷</button>
+            <button class="Button Chicken">🐓</button>
+            <button class="Button Duck">🦆</button>
+            <button class="Button Sheep">🐑</button>
+        </div>
+        <div style="margin-top: 30px; font-size: 35px; font-weight: bold;" class="title"></div>
+        <div class="timer" style="margin-top: 30px; font-weight: bold;"></div>
+    </div>
+    <div class="container" style="display: flex; flex-wrap: wrap; padding: 30px; margin-top: 30px;"></div>
+</body>
+<style>
+    .Button {
+        margin: 10px;
+        background-color: transparent;
+        border: 3px solid black;
+        border-radius: 20px;
+        padding: 20px;
+        font-size: 50px;
+    }
+</style>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+    d3.json("animal.json").then((res) => {
+        let dict = {
+            "Chicken": '🐓',
+            "Pigs": '🐷',
+            "Sheep": '🐑',
+            "Ducks": '🦆'
+        }
+        let chicken = document.getElementsByClassName("Chicken")[0]
+        let pig = document.getElementsByClassName("Pig")[0]
+        let duck = document.getElementsByClassName("Duck")[0]
+        let sheep = document.getElementsByClassName("Sheep")[0]
+        let id
+
+        function pageScroll() {
+        window.scrollBy(0,5);
+        scrolldelay = setTimeout(pageScroll,10);
+        }
+
+        pageScroll()
+        
+        let render = (animal) => {
+            let keys = Object.keys(res)
+            let body = document.body
+            let timer = document.getElementsByClassName("timer")[0]
+            let container = document.getElementsByClassName("container")
+            let title = document.getElementsByClassName("title")[0]
+            container[0].innerHTML = ""
+            // timer.style.position = "absolute"
+            // timer.style.left = "50%"
+            // timer.style.top = "50%"
+            timer.style.fontSize = "80px"
+            timer.style.fontStyle = "bold"
+            let time = 0
+            console.log(title)
+            title.innerHTML = `${animal} slaughtered per second`
+            
+            let interval = setInterval(() => {
+                console.log(container[0].childElementCount)
+                let arr = []
+                let count = Math.ceil(res[animal] / 31556952000)
+                for(let i = 0; i < count; i++ ){
+                    let block = document.createElement("div")
+                    block.style.fontSize = "30px"
+                    block.style.padding = "5px"
+                    block.innerHTML = dict[animal]
+                    arr.push(block)
+                }
+                arr.forEach(element => container[0].appendChild(element))
+                timer.innerHTML = time
+                time += Math.ceil(res[animal] / 31556952000)
+            },1)
+            return interval
+        }
+
+        id = render("Chicken")
+
+        chicken.addEventListener("click", () => {
+            if(id){
+                clearInterval(id)
+            }
+             id = render("Chicken")
+        })
+        pig.addEventListener("click", () => {
+            if(id){
+                clearInterval(id)
+            }
+             id = render("Pigs")
+        })
+        duck.addEventListener("click", () => {
+            if(id){
+                clearInterval(id)
+            }
+             id = render("Ducks")
+        })
+        sheep.addEventListener("click", () => {
+            if(id){
+                clearInterval(id)
+            }
+             id = render("Sheep")
+        })
+    })
+</script>
+</html>
